@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useSection } from '@/contexts/SectionContext'
-import SoundToggle from './SoundToggle'
 
 const NAV_ITEMS = [
   { label: 'Projects',   sectionId: 'work'    },
