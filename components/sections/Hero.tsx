@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useSpring, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import { ButtonColorful } from '@/components/ui/button-colorful'
 
 /* ── Typewriter h1 ─────────────────────────────────────────────── */
 const HERO_TEXT = "Hi, I'm Tanvi, Product Experience Designer crafting thoughtful solutions through creativity and passion."
@@ -122,8 +121,12 @@ export default function Hero() {
               className="flex flex-wrap gap-3"
               initial={false}
             >
-              <a href="#work" data-cursor="cta" style={{ textDecoration: 'none' }}>
-                <ButtonColorful label="View Work" />
+              <a
+                href="#work"
+                className="bg-accent-blue text-white font-display font-semibold text-sm tracking-wide px-6 py-3 rounded-full hover:bg-[#1f3de0] transition-colors duration-200"
+                data-cursor="cta"
+              >
+                View Work
               </a>
               <a
                 href="/Resume-Tanvi.pdf"
