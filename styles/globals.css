@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'Courier Prime', monospace;
+}
+
+* { cursor: none !important; }
+html { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-body);
+  /* Dot-grid background shared across all sections */
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(0,0,0,0.045) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  color: #1c1c1c;
+  overflow-x: hidden;
+}
+
+h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); }
+
+/* ─── Lenis ─────────────────────────────────────────────── */
+html.lenis                { height: auto; }
+.lenis.lenis-smooth       { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped      { overflow: hidden; }
+
+/* ─── Section film label ─────────────────────────────────── */
+.film-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+}
+.film-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────── */
+@keyframes tickerLeft  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@keyframes tickerRight { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+
+@keyframes radarPing {
+  0%   { transform:scale(1); opacity:0.7; }
+  100% { transform:scale(2.5); opacity:0; }
+}
+.radar-ping { animation: radarPing 1.8s ease-out infinite; }
+
+@keyframes rollCredits {
+  from { transform:translateX(0); }
+  to   { transform:translateX(-50%); }
+}
+.roll-credits { animation: rollCredits 24s linear infinite; }
+
+@keyframes orbPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(43,78,255,0.45); }
+  50%     { box-shadow: 0 0 0 14px rgba(43,78,255,0); }
+}
+.orb-pulse { animation: orbPulse 2.4s ease-out infinite; }
+
+@keyframes cursorBlink {
+  0%,49%  { opacity:1; }
+  50%,100%{ opacity:0; }
+}
+.blink { animation: cursorBlink 1s step-end infinite; }
+
+@keyframes borderFlicker {
+  0%,100%{ border-color:#2B4EFF; }
+  33%    { border-color:transparent; }
+  66%    { border-color:#2B4EFF; }
+}
+.border-flicker { animation: borderFlicker 0.28s ease; }
+
+/* ─── CRT scan-line overlay ──────────────────────────────── */
+.scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.04) 0px,
+    rgba(0,0,0,0.04) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* ─── Narrative scroll indicator ─────────────────────────── */
+@keyframes scrollPulse {
+  0%,100% { transform:translateY(0); opacity:0.6; }
+  50%     { transform:translateY(8px); opacity:1; }
+}
+.scroll-pulse { animation: scrollPulse 1.6s ease-in-out infinite; }
+
+/* ─── Polaroid wall infinite scroll ─────────────────────────────── */
+@keyframes scrollUp    { from { transform: translateY(0);    } to { transform: translateY(-50%);  } }
+@keyframes scrollDown  { from { transform: translateY(-50%); } to { transform: translateY(0);     } }
+@keyframes scrollLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%);  } }
+@keyframes scrollRight { from { transform: translateX(-50%); } to { transform: translateX(0);     } }
+
+/* ─── Ambient blob ───────────────────────────────────────── */
+@keyframes blobPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1);    }
+  50%      { opacity: 0.8; transform: scale(1.08); }
+}
+.ambient-blob {
+  position:       absolute;
+  width:          500px;
+  height:         500px;
+  border-radius:  50%;
+  filter:         blur(120px);
+  pointer-events: none;
+  z-index:        0;
+  animation:      blobPulse 6s ease-in-out infinite;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+}
