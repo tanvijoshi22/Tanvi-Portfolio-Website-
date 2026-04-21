@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 /* ─── Data ───────────────────────────────────────────────────────── */
@@ -8,7 +8,6 @@ const FOLDERS = [
     id:      1 as const,
     label:   'Concept Boards',
     accent:  '#E85D26',
-    num:     '01',
     icon:    '🎨',
     link:    'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=688-10977&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=688%3A10977',
     previewBgs: [
@@ -21,7 +20,6 @@ const FOLDERS = [
     id:      2 as const,
     label:   'Design Systems',
     accent:  '#2B4EFF',
-    num:     '02',
     icon:    '🧱',
     link:    'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=689-22823&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=689%3A22823',
     previewBgs: [
@@ -34,7 +32,6 @@ const FOLDERS = [
     id:      3 as const,
     label:   'Vibe Coding',
     accent:  '#7C3AED',
-    num:     '03',
     icon:    '⚡',
     link:    'https://holo-reel-hub.lovable.app/',
     previewBgs: [
@@ -55,15 +52,20 @@ type FolderId   = 1 | 2 | 3
 type FolderData = typeof FOLDERS[0]
 
 /* ─── Paper positions ────────────────────────────────────────────── */
+const PAPER_TOP = 130  // paddingTop on wrapper = room for papers to emerge
+
+// Default: papers tucked inside folder body (behind the white surface)
 const PAPERS_CLOSED = [
-  { rotate: -4, y: 22, x:   0 },
-  { rotate: -1, y: 16, x:   0 },
-  { rotate:  2, y: 19, x:   0 },
+  { rotate: -4, y: PAPER_TOP + 40, x:  0 },
+  { rotate: -1, y: PAPER_TOP + 20, x:  0 },
+  { rotate:  2, y: PAPER_TOP + 30, x:  0 },
 ]
+
+// Hover: papers emerge into the padding-top area (above folder body)
 const PAPERS_HOVERED = [
-  { rotate: -9, y: 56, x: -14 },
-  { rotate:  0, y: 40, x:   0 },
-  { rotate:  8, y: 48, x:  14 },
+  { rotate: -10, y: 18, x: -22 },
+  { rotate:   0, y:  4, x:   0 },
+  { rotate:  10, y: 12, x:  22 },
 ]
 
 /* ─── Single Folder ──────────────────────────────────────────────── */
@@ -75,195 +77,121 @@ function Folder({
   onHoverChange: (h: boolean) => void
 }) {
   const [hovered, setHovered] = useState(false)
-  const tiltRef  = useRef<HTMLDivElement>(null)
-  const shineRef = useRef<HTMLDivElement>(null)
-
-  const BODY_HEIGHT = 232
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isMobile || !tiltRef.current) return
-    const rect = tiltRef.current.getBoundingClientRect()
-    const cx   = (e.clientX - rect.left) / rect.width  - 0.5
-    const cy   = (e.clientY - rect.top)  / rect.height - 0.5
-    tiltRef.current.style.transition = 'transform 0.08s ease-out'
-    tiltRef.current.style.transform  =
-      `perspective(900px) rotateX(${(-cy * 6).toFixed(2)}deg) rotateY(${(cx * 10).toFixed(2)}deg)`
-    if (shineRef.current) {
-      const sx = Math.round((0.5 - cx) * 100)
-      const sy = Math.round((0.5 - cy) * 100)
-      shineRef.current.style.background =
-        `radial-gradient(circle at ${sx}% ${sy}%, rgba(255,255,255,0.32), transparent 62%)`
-      shineRef.current.style.opacity = '0.12'
-    }
-  }
-
-  const handleMouseEnter = () => {
-    setHovered(true)
-    onHoverChange(true)
-  }
-
-  const handleMouseLeave = useCallback(() => {
-    setHovered(false)
-    onHoverChange(false)
-    if (tiltRef.current) {
-      tiltRef.current.style.transition = 'transform 0.6s cubic-bezier(0.34,1.10,0.64,1)'
-      tiltRef.current.style.transform  = 'perspective(900px) rotateX(0deg) rotateY(0deg)'
-    }
-    if (shineRef.current) {
-      shineRef.current.style.opacity = '0'
-    }
-  }, [onHoverChange])
+  const BODY_HEIGHT = 280
 
   return (
     <div
       style={{
-        width:      isMobile ? '100%' : 340,
-        flexShrink: 0,
         position:   'relative',
+        width:       isMobile ? '100%' : 340,
+        paddingTop:  isMobile ? 0 : PAPER_TOP,
+        cursor:     'pointer',
       }}
       data-cursor="explore"
       data-cursor-color={folder.accent}
+      onMouseEnter={() => { setHovered(true);  onHoverChange(true)  }}
+      onMouseLeave={() => { setHovered(false); onHoverChange(false) }}
+      onClick={() => window.open(folder.link, '_blank', 'noopener,noreferrer')}
     >
-      {/* Tilt wrapper */}
-      <div
-        ref={tiltRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-        onClick={() => window.open(folder.link, '_blank', 'noopener,noreferrer')}
+      {/* ── Papers — absolute, emerge above folder body on hover ── */}
+      {!isMobile && folder.previewBgs.map((bg, i) => {
+        const target = hovered ? PAPERS_HOVERED[i] : PAPERS_CLOSED[i]
+        return (
+          <motion.div
+            key={i}
+            animate={{ x: target.x, y: target.y, rotate: target.rotate }}
+            transition={{
+              duration: 0.5,
+              ease:    [0.34, 1.20, 0.64, 1] as const,
+              delay:    hovered ? i * 0.055 : (2 - i) * 0.04,
+            }}
+            style={{
+              position:     'absolute',
+              top:           0,
+              left:         '50%',
+              translateX:   '-50%',
+              width:         200,
+              height:        130,
+              borderRadius:  14,
+              background:    bg,
+              zIndex:        i + 2,   // 2, 3, 4
+              boxShadow:    '0 6px 20px rgba(0,0,0,0.12)',
+              pointerEvents: 'none',
+            }}
+          />
+        )
+      })}
+
+      {/* ── Folder body — z-index 5 covers papers in closed state ── */}
+      <motion.div
+        animate={{ y: hovered ? -6 : 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         style={{
-          transformStyle: 'preserve-3d',
-          willChange:     'transform',
-          position:       'relative',
-          cursor:         'pointer',
+          position:     'relative',
+          height:        BODY_HEIGHT,
+          background:   '#FAFAF8',
+          border:       `1.5px solid ${hovered ? folder.accent + '55' : '#E5E5E5'}`,
+          borderRadius:  20,
+          zIndex:        5,
+          overflow:     'hidden',
+          boxShadow:     hovered
+            ? `0 18px 44px rgba(0,0,0,0.10), 0 0 0 3px ${folder.accent}18`
+            : '0 2px 12px rgba(0,0,0,0.06)',
+          transition:   'border-color 0.25s ease, box-shadow 0.25s ease',
         }}
       >
-        {/* ── Tab ── */}
-        <div style={{
-          height:          48,
-          width:           '62%',
-          background:      folder.accent,
-          borderRadius:   '8px 8px 0 0',
-          display:        'flex',
-          alignItems:     'center',
-          gap:             8,
-          padding:        '0 14px',
-          filter:          hovered ? 'brightness(1.12)' : 'brightness(1)',
-          transition:     'filter 0.25s ease',
-          position:       'relative',
-          zIndex:          2,
-          userSelect:     'none',
+        {/* Icon — top left */}
+        <span style={{
+          position: 'absolute',
+          top:       18,
+          left:      18,
+          fontSize:  20,
+          lineHeight: 1,
+          userSelect: 'none',
         }}>
-          <span style={{ fontSize: 18, lineHeight: 1 }}>{folder.icon}</span>
-          <span style={{
-            fontFamily:    'var(--font-mono)',
-            fontSize:       11,
-            fontWeight:     700,
-            color:         'rgba(255,255,255,0.7)',
-            letterSpacing: '0.08em',
-          }}>{folder.num}</span>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontWeight:  700,
-            fontSize:    14,
-            color:      'white',
-            flex:         1,
-          }}>{folder.label}</span>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontSize:    13,
-            color:      'rgba(255,255,255,0.85)',
-            fontWeight:  600,
-          }}>↗</span>
-        </div>
+          {folder.icon}
+        </span>
 
-        {/* ── Folder body ── */}
-        <motion.div
-          animate={{
-            y: hovered ? -12 : 0,
-          }}
-          transition={{ duration: 0.4, ease: [0.34, 1.10, 0.64, 1] }}
+        {/* Arrow — top right, fades in on hover */}
+        <motion.span
+          animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : -5 }}
+          transition={{ duration: 0.2 }}
           style={{
-            background:    '#FAFAF8',
-            border:       '1px solid #E5E5E5',
-            borderRadius: '0 12px 16px 16px',
-            overflow:     'hidden',
-            position:     'relative',
-            height:        BODY_HEIGHT,
+            position:   'absolute',
+            top:         18,
+            right:       18,
+            fontSize:    14,
+            color:       folder.accent,
+            fontWeight:  700,
+            lineHeight:  1,
+            userSelect: 'none',
           }}
         >
-          {/* Preview papers */}
-          <div style={{
-            position:      'absolute',
-            inset:          0,
-            overflow:      'hidden',
-            pointerEvents: 'none',
-          }}>
-            {folder.previewBgs.map((bg, i) => {
-              const target = (hovered && !isMobile) ? PAPERS_HOVERED[i] : PAPERS_CLOSED[i]
-              return (
-                <motion.div
-                  key={i}
-                  animate={{
-                    x:      target.x,
-                    y:      target.y,
-                    rotate: target.rotate,
-                  }}
-                  transition={{
-                    duration: 0.45,
-                    ease:     [0.34, 1.20, 0.64, 1] as const,
-                    delay:    hovered ? i * 0.05 : (2 - i) * 0.04,
-                  }}
-                  style={{
-                    position:    'absolute',
-                    top:          0,
-                    left:        '50%',
-                    translateX:  '-50%',
-                    width:        isMobile ? 160 : 200,
-                    height:       isMobile ? 90 : 120,
-                    borderRadius: 8,
-                    background:   bg,
-                    zIndex:       i,
-                  }}
-                />
-              )
-            })}
+          ↗
+        </motion.span>
 
-            {/* Hover hint */}
-            <motion.p
-              animate={{ opacity: hovered ? 1 : 0 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                position:      'absolute',
-                bottom:         14,
-                left:            0, right: 0,
-                textAlign:     'center',
-                fontFamily:    'var(--font-body)',
-                fontSize:       11,
-                color:          '#AAAAAA',
-                margin:          0,
-                pointerEvents: 'none',
-              }}
-            >
-              Click to explore →
-            </motion.p>
-          </div>
-        </motion.div>
-
-        {/* Shine overlay */}
-        <div
-          ref={shineRef}
-          style={{
-            position:      'absolute',
-            inset:          0,
-            borderRadius:  '8px 12px 16px 16px',
-            pointerEvents: 'none',
-            opacity:        0,
-            transition:    'opacity 0.15s ease',
-            zIndex:         5,
-          }}
-        />
-      </div>
+        {/* Name chip — bottom center */}
+        <div style={{
+          position:       'absolute',
+          bottom:          20,
+          left:           '50%',
+          transform:      'translateX(-50%)',
+          background:     'white',
+          border:         '1px solid rgba(0,0,0,0.08)',
+          borderRadius:    999,
+          padding:        '8px 24px',
+          fontFamily:     'var(--font-body)',
+          fontWeight:      700,
+          fontSize:        15,
+          color:          '#1C1C1C',
+          whiteSpace:     'nowrap',
+          boxShadow:      '0 2px 8px rgba(0,0,0,0.08)',
+          pointerEvents:  'none',
+          userSelect:     'none',
+        }}>
+          {folder.label}
+        </div>
+      </motion.div>
     </div>
   )
 }
@@ -287,9 +215,9 @@ export default function SkillsVault() {
       id="skills-vault"
       data-section="skills-vault"
       style={{
-        padding:   isMobile ? '80px 24px' : '120px 24px',
+        padding:    isMobile ? '80px 24px' : '120px 24px',
         position:  'relative',
-        overflow:  'hidden',
+        overflowX: 'hidden',
       }}
     >
       {/* Background color bleed */}
@@ -330,46 +258,31 @@ export default function SkillsVault() {
             fontSize:     'clamp(40px, 5vw, 56px)',
             color:         '#1C1C1C',
             lineHeight:    1.1,
-            marginBottom:  12,
+            marginBottom:  isMobile ? 48 : 72,
           }}
         >
           Skills Vault
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
-          style={{
-            fontFamily:   'var(--font-body)',
-            fontSize:      16,
-            color:         '#6B6B6B',
-            marginBottom:  isMobile ? 48 : 72,
-          }}
-        >
-          Three things I do really well. Click a folder to explore.
-        </motion.p>
-
         {/* Folder row */}
         <div style={{
           display:        'flex',
           flexDirection:   isMobile ? 'column' : 'row',
-          gap:             24,
+          gap:             isMobile ? 32 : 24,
           justifyContent: 'center',
-          alignItems:     'flex-start',
+          alignItems:     'flex-end',
         }}>
           {FOLDERS.map((folder, i) => (
             <motion.div
               key={folder.id}
-              initial={{ opacity: 0, y: -60 }}
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
                 type:      'spring',
-                stiffness:  120,
-                damping:    20,
-                delay:      0.4 + i * 0.15,
+                stiffness:  100,
+                damping:    18,
+                delay:      0.3 + i * 0.12,
               }}
               style={{ width: isMobile ? '100%' : 340 }}
             >

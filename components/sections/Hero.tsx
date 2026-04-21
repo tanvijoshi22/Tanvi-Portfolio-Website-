@@ -87,26 +87,40 @@ export default function Hero() {
       {/* ── Top meta bar ───────────────────────────────────────────────── */}
       <motion.div
         className="relative z-10 flex flex-wrap items-center gap-3 px-6 md:px-10 pt-24 pb-0"
-        initial={false}
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
+        }}
       >
         {/* Location */}
-        <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-muted-text uppercase border border-muted-text/20 px-3 py-1.5 rounded-full">
+        <motion.span
+          className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-muted-text uppercase border border-muted-text/20 px-3 py-1.5 rounded-full"
+          variants={{ hidden: { opacity: 0, y: -16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+        >
           <svg width="8" height="10" viewBox="0 0 8 10" fill="none" className="opacity-60">
             <path d="M4 0C2.07 0 .5 1.57.5 3.5 .5 6.13 4 10 4 10s3.5-3.87 3.5-6.5C7.5 1.57 5.93 0 4 0zm0 4.75a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z" fill="currentColor"/>
           </svg>
           Hyderabad, IN
-        </span>
+        </motion.span>
 
         {/* Experience */}
-        <span className="font-mono text-[10px] tracking-widest text-muted-text uppercase border border-muted-text/20 px-3 py-1.5 rounded-full">
+        <motion.span
+          className="font-mono text-[10px] tracking-widest text-muted-text uppercase border border-muted-text/20 px-3 py-1.5 rounded-full"
+          variants={{ hidden: { opacity: 0, y: -16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+        >
           5 yrs experience
-        </span>
+        </motion.span>
 
         {/* Available */}
-        <span className="flex items-center gap-2 font-mono text-[10px] tracking-widest text-[#1a9e5c] uppercase border border-[#1a9e5c]/25 bg-[#1a9e5c]/06 px-3 py-1.5 rounded-full">
+        <motion.span
+          className="flex items-center gap-2 font-mono text-[10px] tracking-widest text-[#1a9e5c] uppercase border border-[#1a9e5c]/25 bg-[#1a9e5c]/06 px-3 py-1.5 rounded-full"
+          variants={{ hidden: { opacity: 0, y: -16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_6px_#22c55e]" />
           Available to work
-        </span>
+        </motion.span>
       </motion.div>
 
       {/* ── Main content ───────────────────────────────────────────────── */}
@@ -114,12 +128,20 @@ export default function Hero() {
         <div className="grid md:grid-cols-2 gap-12 items-center w-full py-8">
 
           {/* Left — text */}
-          <div>
-            <TypewriterHero />
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15, delayChildren: 0.45 } } }}
+          >
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 32 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } } }}
+            >
+              <TypewriterHero />
+            </motion.div>
 
             <motion.div
               className="flex flex-wrap gap-3"
-              initial={false}
+              variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } }}
             >
               <a
                 href="#work"
@@ -138,13 +160,15 @@ export default function Hero() {
                 Resume
               </a>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Right — photo */}
           <motion.div
             className="relative border border-near-black/10 overflow-hidden aspect-[3/4] bg-card-bg"
-            initial={false}
             style={{ borderRadius: 4 }}
+            initial={{ opacity: 0, x: 60, scale: 0.96 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
           >
             <Image
               src="/tanvi.png"

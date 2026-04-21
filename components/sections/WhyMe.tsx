@@ -232,16 +232,38 @@ export default function WhyMe() {
 
       <div className="max-w-6xl mx-auto px-6 md:px-10">
 
-        {/* ── Section label (unchanged) ── */}
-        <p className="film-label mb-6">Why Tanvi</p>
+        {/* ── Section label ── */}
+        <motion.p
+          className="film-label mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          Why Tanvi
+        </motion.p>
 
-        {/* ── Heading + subtext (unchanged) ── */}
-        <h2 className="font-display font-bold text-near-black text-4xl md:text-5xl mb-4">
+        {/* ── Heading ── */}
+        <motion.h2
+          className="font-display font-bold text-near-black text-4xl md:text-5xl mb-4"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        >
           What makes me the ideal choice for you?
-        </h2>
-        <p className="font-body text-muted-text text-lg mb-16 max-w-lg">
+        </motion.h2>
+
+        {/* ── Subtext ── */}
+        <motion.p
+          className="font-body text-muted-text text-lg mb-16 max-w-lg"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: 'easeOut', delay: 0.2 }}
+        >
           A few things I genuinely bring to every project — not just on paper, but in practice.
-        </p>
+        </motion.p>
 
         {/* ── Flip card grid ── */}
         <div className="grid md:grid-cols-2 gap-5 mb-16">

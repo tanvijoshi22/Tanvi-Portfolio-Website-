@@ -23,7 +23,7 @@ const COL_B_DATA = [
 const TIMELINE = [
   { year: '2020', role: 'Visual Design Apprentice',   company: 'UXReactor',             note: '6 months of training, built a real foundation in problem solving and design process.' },
   { year: '2021', role: 'Visual Experience Designer', company: 'UXReactor',             note: 'No more shadowing. Real projects, real problems, real ownership. This is where I found my design voice.' },
-  { year: '2023', role: 'Senior UI Designer',         company: 'Lollypop Design Studio', note: 'Jumped across fintech, health, OTT, B2B, B2C — you name it. Turned out, variety was exactly what I needed.' },
+  { year: '2023', role: 'Senior UI Designer',         company: 'Lollypop Design Studio', note: 'Jumped across fintech, health, OTT, B2B, B2C. Turned out, variety was exactly what I needed.' },
 ]
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -344,29 +344,6 @@ export default function About() {
               Get to Know<br />Me Better!
             </motion.h2>
 
-            {/* Location badge */}
-            <motion.div
-              style={{ marginBottom: 32 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
-            >
-              <span style={{
-                display:        'inline-flex',
-                alignItems:     'center',
-                background:     'white',
-                border:         '1px solid #E5E5E5',
-                borderRadius:   999,
-                padding:        '6px 14px',
-                fontFamily:     'var(--font-body)',
-                fontSize:       13,
-                color:          '#6B6B6B',
-                boxShadow:      '0 1px 4px rgba(0,0,0,0.05)',
-              }}>
-                📍 Hyderabad, India
-              </span>
-            </motion.div>
 
             {/* Paragraph 1 */}
             <motion.p

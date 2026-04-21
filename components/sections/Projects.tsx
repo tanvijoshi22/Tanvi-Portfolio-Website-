@@ -25,7 +25,7 @@ const PROJECTS = [
     accentColor: '#2B4EFF',
     hoverShadow: '0 20px 60px rgba(0,0,0,0.38)',
     hoverBorder: 'rgba(255,255,255,0.13)',
-    mockupSrc:   '/Project-images/Device-modal.jpg',
+    mockupSrc:   '/Project-images/Project-1.png',
     mockupAlt:   'IoT Device Integration Platform mockup',
     mockupShadow:'0 20px 60px rgba(0,0,0,0.3)',
   },
@@ -46,7 +46,7 @@ const PROJECTS = [
     accentColor: '#FFD234',
     hoverShadow: '0 20px 60px rgba(0,0,0,0.30)',
     hoverBorder: 'rgba(255,255,255,0.15)',
-    mockupSrc:   '/Project-images/Dashboard.jpg',
+    mockupSrc:   '/Project-images/Project-2.png',
     mockupAlt:   'Gym Management Dashboard mockup',
     mockupShadow:'0 20px 60px rgba(0,0,0,0.3)',
   },
@@ -67,7 +67,7 @@ const PROJECTS = [
     accentColor: '#7C3AED',
     hoverShadow: '0 20px 60px rgba(124,58,237,0.30)',
     hoverBorder: '#7C3AED',
-    mockupSrc:   '/Project-images/Sony.jpg',
+    mockupSrc:   '/Project-images/Project-3.png',
     mockupAlt:   'Sony LIV OTT Application mockup',
     mockupShadow:'0 20px 60px rgba(124,58,237,0.3)',
   },
@@ -169,9 +169,9 @@ function ProjectCard({
           zIndex:    2,
         }}>
 
-          {/* ── LEFT ZONE — text (60%) ── */}
+          {/* ── LEFT ZONE — text (50%) ── */}
           <div style={{
-            width:         '60%',
+            width:         '50%',
             padding:        40,
             display:       'flex',
             flexDirection: 'column',
@@ -181,11 +181,6 @@ function ProjectCard({
             {/* Top: logo + project name + tags */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: '50%',
-                  background: project.logoColor,
-                  flexShrink: 0,
-                }} />
                 <span style={{
                   fontFamily: 'var(--font-body)',
                   fontWeight:  700,
@@ -230,10 +225,12 @@ function ProjectCard({
                 color:             project.textColor,
                 lineHeight:        1.2,
                 marginBottom:      12,
-                display:          '-webkit-box',
-                WebkitLineClamp:   3,
-                WebkitBoxOrient:  'vertical',
-                overflow:         'hidden',
+                ...(project.id === 'p2' && {
+                  display:         '-webkit-box',
+                  WebkitLineClamp:  3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow:        'hidden',
+                }),
               } as React.CSSProperties}>
                 {project.title}
               </h3>
@@ -295,36 +292,32 @@ function ProjectCard({
             </div>
           </div>
 
-          {/* ── RIGHT ZONE — image mockup (40%) ── */}
+          {/* ── RIGHT ZONE — image mockup (50%) ── */}
           <div style={{
-            width:          '40%',
+            width:          '50%',
             height:         '100%',
             flexShrink:      0,
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-            padding:        '20px 16px 20px 8px',
+            position:       'relative',
             overflow:       'hidden',
           }}>
             <motion.div
-              animate={{ scale: hovered ? 1.04 : 1, y: hovered ? -4 : 0 }}
+              animate={{ scale: hovered ? 1.07 : 1.18, y: hovered ? -6 : 0 }}
+              initial={{ scale: 1.18 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
               style={{
-                position:     'relative',
-                width:        '100%',
-                height:       '100%',
-                borderRadius:  8,
-                overflow:     'hidden',
+                position:        'absolute',
+                inset:            0,
+                transformOrigin: 'center center',
               }}
             >
               <Image
                 src={project.mockupSrc}
                 alt={project.mockupAlt}
                 fill
-                sizes="(max-width:768px) 50vw, 280px"
+                sizes="(max-width:768px) 50vw, 420px"
                 style={{
-                  objectFit:      'cover',
-                  objectPosition: 'center top',
+                  objectFit:      'contain',
+                  objectPosition: 'center center',
                 }}
               />
             </motion.div>
@@ -370,10 +363,6 @@ function MobileCard({ project, i }: { project: Project; i: number }) {
     >
       {/* Logo + name */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <div style={{
-          width: 24, height: 24, borderRadius: '50%',
-          background: project.logoColor, flexShrink: 0,
-        }} />
         <span style={{
           fontFamily: 'var(--font-body)', fontWeight: 700,
           fontSize: 13, color: project.textColor,
