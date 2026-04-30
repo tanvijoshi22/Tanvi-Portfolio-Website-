@@ -101,7 +101,7 @@ export default function ConceptHero() {
           lineHeight:  1.7,
         }}
       >
-        Every product has a visual personality waiting to be found. Early in the process, I use concept boards to discover it — exploring color, mood, type, and tone to set a clear direction that defines the foundation of the design. It's how I make sure the product doesn't just work, but feels right!
+        Every product has a visual personality waiting to be found. Early in the process, I use concept boards to discover it — exploring color, mood, type, and tone to set a clear direction that defines the foundation of the design. It&apos;s how I make sure the product doesn&apos;t just work, but feels right!
       </motion.p>
     </section>
   )
