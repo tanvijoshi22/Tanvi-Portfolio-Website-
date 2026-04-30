@@ -1,205 +1,256 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
+import Link from 'next/link'
 
-/* ─── Data ───────────────────────────────────────────────────────── */
-const FOLDERS = [
+/* ─── Panel data ────────────────────────────────────────────────── */
+/* C-01 imgRotate false  C-02 desc  C-03 tags  C-04 stats[]
+   C-05 cta              C-06 stats[]
+   C-07 desc             C-08 tags[]  C-09 cta  C-10 shadow none  C-11 colRatio
+   C-12 heading          C-13 cta                                              */
+
+const PANELS = [
   {
-    id:      1 as const,
-    label:   'Concept Boards',
-    accent:  '#E85D26',
-    icon:    '🎨',
-    link:    'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=688-10977&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=688%3A10977',
-    previewBgs: [
-      'linear-gradient(135deg,#F5C8BC,#E89888)',
-      'linear-gradient(135deg,#FBE0D0,#F0C0A0)',
-      'linear-gradient(135deg,#F0D8C8,#D8B8A8)',
-    ],
+    /* ── Panel 1 — Concept Boards ── */
+    id:          1,
+    num:         '01 / 04',
+    icon:        '🎨',
+    heading:     'Concept Boards',
+    headingPx:   36,
+    label2:      null as string | null,
+    accent:      '#E85D26',
+    sectionBg:   '#FDF0EC',
+    bg:          'linear-gradient(135deg, #FFF4EE 0%, #FFE8D6 100%)',
+    colRatio:    '40% 60%',
+    /* C-02 */ desc:    'Visual direction setting through mood boards, foundations and framework — defining how a product feels before a single screen is designed.',
+    tags:        [] as string[],
+    stats:       [] as { v: string; l: string }[],
+    badge:       null as string | null,
+    cta:         { label: 'View All', href: '/concept-boards', align: 'left' as 'left' | 'right', newTab: true },
+    imgSrc:      '/Skill-vault/Concepts.png',
+    imgAlt:      'Concept Boards — Visual Direction Work',
+    imgFallback: '#FFF4EE',
+    imgFit:      'cover'   as 'cover' | 'contain',
+    imgPos:      'top left',
+    /* C-01 */ imgRotate:   false,
+    imgPriority: true,
+    imgShadow:   '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)',
+    imgShadowHov:'0 24px 70px rgba(0,0,0,0.18), 0 6px 20px rgba(0,0,0,0.10)',
   },
   {
-    id:      2 as const,
-    label:   'Design Systems',
-    accent:  '#2B4EFF',
-    icon:    '🧱',
-    link:    'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=689-22823&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=689%3A22823',
-    previewBgs: [
-      'linear-gradient(135deg,#C4D4FF,#90B0FF)',
-      'linear-gradient(135deg,#D4E0FF,#A8BCEF)',
-      'linear-gradient(135deg,#D8E8FF,#B0C4F0)',
-    ],
+    /* ── Panel 2 — Design Systems ── */
+    id:          2,
+    num:         '02 / 04',
+    icon:        '🧱',
+    heading:     'Design Systems',
+    headingPx:   36,
+    label2:      null as string | null,
+    accent:      '#2B4EFF',
+    sectionBg:   '#EEF0FF',
+    bg:          'linear-gradient(135deg, #EEF2FF 0%, #E0E8FF 100%)',
+    colRatio:    '40% 60%',
+    desc:        'Scalable component libraries, token structures, and documented patterns that bring consistency to every product I touch — across teams and platforms.',
+    tags:        [] as string[],
+    stats:       [] as { v: string; l: string }[],
+    badge:       null as string | null,
+    cta:         { label: 'View All', href: 'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?node-id=689-22823&viewport=273%2C169%2C0.04&t=RN3TJMnyp1m0gzC9-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=689%3A22823&page-id=104%3A6525', align: 'left' as 'left' | 'right' },
+    imgSrc:      '/Skill-vault/Design-system.png',
+    imgAlt:      'Design Systems — Component Library Work',
+    imgFallback: '#EEF2FF',
+    imgFit:      'cover'   as 'cover' | 'contain',
+    imgPos:      'top left',
+    imgRotate:   false,
+    imgPriority: false,
+    imgShadow:   '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)',
+    imgShadowHov:'0 24px 70px rgba(0,0,0,0.18), 0 6px 20px rgba(0,0,0,0.10)',
   },
   {
-    id:      3 as const,
-    label:   'Vibe Coding',
-    accent:  '#7C3AED',
-    icon:    '⚡',
-    link:    'https://holo-reel-hub.lovable.app/',
-    previewBgs: [
-      'linear-gradient(135deg,#D8C8FF,#B098E8)',
-      'linear-gradient(135deg,#E0D4FF,#C0A0E0)',
-      'linear-gradient(135deg,#E8DCFF,#C8B0EC)',
-    ],
+    /* ── Panel 3 — FitForge ── */
+    id:          3,
+    num:         '03 / 04',
+    icon:        '⚡',
+    heading:     'My First Vibe Coded Mobile Application',
+    headingPx:   28,
+    label2:      'VIBE CODING · FIRST BUILD',
+    accent:      '#7C3AED',
+    sectionBg:   '#F3EEFF',
+    bg:          'linear-gradient(135deg, #F3EEFF 0%, #E8D8FF 100%)',
+    /* C-11 */ colRatio:    '30% 70%',
+    /* C-07 */ desc:    'FitForge is an AI-driven mobile application that helps you efficiently manage your fitness journey — track workouts, plan diets, and get personalised guidance to hit your goals.',
+    tags:        [] as string[],
+    stats:       [] as { v: string; l: string }[],
+    badge:       null as string | null,
+    cta:         { label: 'View Project', href: '#', align: 'left' as 'left' | 'right' },
+    imgSrc:      '/Skill-vault/Fitforge.png',
+    imgAlt:      'FitForge — Vibe Coded Mobile Application',
+    imgFallback: '#F3EEFF',
+    imgFit:      'contain' as 'cover' | 'contain',
+    imgPos:      'center center',
+    imgRotate:   false,
+    imgPriority: false,
+    /* C-10 */ imgShadow:   'none',
+    /* C-10 */ imgShadowHov:'none',
+  },
+  {
+    /* ── Panel 4 — Movie Recommendation ── */
+    id:          4,
+    num:         '04 / 04',
+    icon:        '💚',
+    /* C-12 */ heading:     'My First Project — a movie recommendation website where you can explore and suggest movies across different genres.',
+    /* C-12 */ headingPx:   20,
+    label2:      'LOVABLE · FIRST CREATION',
+    accent:      '#2D7A4F',
+    sectionBg:   '#F0F7F2',
+    bg:          'linear-gradient(135deg, #F0F7F0 0%, #E0EFE0 100%)',
+    colRatio:    '40% 60%',
+    desc:        'Built with love and a lot of iterations. My first project created entirely with Lovable — from idea to shipped product, no code handoff required.',
+    tags:        [] as string[],
+    stats:       [] as { v: string; l: string }[],
+    badge:       null as string | null,
+    cta:         { label: 'Explore Project', href: 'https://holo-reel-hub.lovable.app/', align: 'left' as 'left' | 'right' },
+    imgSrc:      '/Skill-vault/Movie.png',
+    imgAlt:      'Galaxy Explorer — My First Lovable Creation',
+    imgFallback: '#0D1117',
+    imgFit:      'cover'   as 'cover' | 'contain',
+    imgPos:      'top center',
+    imgRotate:   false,
+    imgPriority: false,
+    imgShadow:   '0 20px 60px rgba(0,0,0,0.20)',
+    imgShadowHov:'0 24px 70px rgba(0,0,0,0.28)',
   },
 ]
 
-const SECTION_TINTS: Record<number, string> = {
-  1: '#FDF0EC',
-  2: '#EEF0FF',
-  3: '#F3EEFF',
-}
+const GAP = 20
 
-type FolderId   = 1 | 2 | 3
-type FolderData = typeof FOLDERS[0]
-
-/* ─── Paper positions ────────────────────────────────────────────── */
-const PAPER_TOP = 130  // paddingTop on wrapper = room for papers to emerge
-
-// Default: papers tucked inside folder body (behind the white surface)
-const PAPERS_CLOSED = [
-  { rotate: -4, y: PAPER_TOP + 40, x:  0 },
-  { rotate: -1, y: PAPER_TOP + 20, x:  0 },
-  { rotate:  2, y: PAPER_TOP + 30, x:  0 },
-]
-
-// Hover: papers emerge into the padding-top area (above folder body)
-const PAPERS_HOVERED = [
-  { rotate: -10, y: 18, x: -22 },
-  { rotate:   0, y:  4, x:   0 },
-  { rotate:  10, y: 12, x:  22 },
-]
-
-/* ─── Single Folder ──────────────────────────────────────────────── */
-function Folder({
-  folder, isMobile, onHoverChange,
-}: {
-  folder:        FolderData
-  isMobile:      boolean
-  onHoverChange: (h: boolean) => void
+/* ─── CTA button (handles hover state internally) ───────────────── */
+function PanelCTA({ label, href, accent, align, newTab }: {
+  label:   string
+  href:    string
+  accent:  string
+  align:   'left' | 'right'
+  newTab?: boolean
 }) {
-  const [hovered, setHovered] = useState(false)
-  const BODY_HEIGHT = 280
-
+  const [hov, setHov] = useState(false)
+  const isInternal = href.startsWith('/') && !newTab
+  const sharedStyle: React.CSSProperties = {
+    display:        'inline-flex',
+    alignItems:     'center',
+    justifyContent: 'center',
+    background:      accent,
+    color:          'white',
+    fontFamily:     'var(--font-body)',
+    fontWeight:      600,
+    fontSize:        13,
+    padding:        '0 20px',
+    borderRadius:    999,
+    textDecoration: 'none',
+    minHeight:       44,
+    minWidth:        44,
+    cursor:         'pointer',
+    opacity:         hov ? 0.88 : 1,
+    transform:       hov ? 'translateY(-1px)' : 'none',
+    transition:     'opacity 200ms ease, transform 200ms ease',
+    letterSpacing:  '0.02em',
+    whiteSpace:     'nowrap',
+  }
   return (
-    <div
-      style={{
-        position:   'relative',
-        width:       isMobile ? '100%' : 340,
-        paddingTop:  isMobile ? 0 : PAPER_TOP,
-        cursor:     'pointer',
-      }}
-      data-cursor="explore"
-      data-cursor-color={folder.accent}
-      onMouseEnter={() => { setHovered(true);  onHoverChange(true)  }}
-      onMouseLeave={() => { setHovered(false); onHoverChange(false) }}
-      onClick={() => window.open(folder.link, '_blank', 'noopener,noreferrer')}
-    >
-      {/* ── Papers — absolute, emerge above folder body on hover ── */}
-      {!isMobile && folder.previewBgs.map((bg, i) => {
-        const target = hovered ? PAPERS_HOVERED[i] : PAPERS_CLOSED[i]
-        return (
-          <motion.div
-            key={i}
-            animate={{ x: target.x, y: target.y, rotate: target.rotate }}
-            transition={{
-              duration: 0.5,
-              ease:    [0.34, 1.20, 0.64, 1] as const,
-              delay:    hovered ? i * 0.055 : (2 - i) * 0.04,
-            }}
-            style={{
-              position:     'absolute',
-              top:           0,
-              left:         '50%',
-              translateX:   '-50%',
-              width:         200,
-              height:        130,
-              borderRadius:  14,
-              background:    bg,
-              zIndex:        i + 2,   // 2, 3, 4
-              boxShadow:    '0 6px 20px rgba(0,0,0,0.12)',
-              pointerEvents: 'none',
-            }}
-          />
-        )
-      })}
-
-      {/* ── Folder body — z-index 5 covers papers in closed state ── */}
-      <motion.div
-        animate={{ y: hovered ? -6 : 0 }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
-        style={{
-          position:     'relative',
-          height:        BODY_HEIGHT,
-          background:   '#FAFAF8',
-          border:       `1.5px solid ${hovered ? folder.accent + '55' : '#E5E5E5'}`,
-          borderRadius:  20,
-          zIndex:        5,
-          overflow:     'hidden',
-          boxShadow:     hovered
-            ? `0 18px 44px rgba(0,0,0,0.10), 0 0 0 3px ${folder.accent}18`
-            : '0 2px 12px rgba(0,0,0,0.06)',
-          transition:   'border-color 0.25s ease, box-shadow 0.25s ease',
-        }}
-      >
-        {/* Icon — top left */}
-        <span style={{
-          position: 'absolute',
-          top:       18,
-          left:      18,
-          fontSize:  20,
-          lineHeight: 1,
-          userSelect: 'none',
-        }}>
-          {folder.icon}
-        </span>
-
-        {/* Arrow — top right, fades in on hover */}
-        <motion.span
-          animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : -5 }}
-          transition={{ duration: 0.2 }}
-          style={{
-            position:   'absolute',
-            top:         18,
-            right:       18,
-            fontSize:    14,
-            color:       folder.accent,
-            fontWeight:  700,
-            lineHeight:  1,
-            userSelect: 'none',
-          }}
+    <div style={{ display: 'flex', justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
+      {isInternal ? (
+        <Link
+          href={href}
+          onMouseEnter={() => setHov(true)}
+          onMouseLeave={() => setHov(false)}
+          style={sharedStyle}
         >
-          ↗
-        </motion.span>
-
-        {/* Name chip — bottom center */}
-        <div style={{
-          position:       'absolute',
-          bottom:          20,
-          left:           '50%',
-          transform:      'translateX(-50%)',
-          background:     'white',
-          border:         '1px solid rgba(0,0,0,0.08)',
-          borderRadius:    999,
-          padding:        '8px 24px',
-          fontFamily:     'var(--font-body)',
-          fontWeight:      700,
-          fontSize:        15,
-          color:          '#1C1C1C',
-          whiteSpace:     'nowrap',
-          boxShadow:      '0 2px 8px rgba(0,0,0,0.08)',
-          pointerEvents:  'none',
-          userSelect:     'none',
-        }}>
-          {folder.label}
-        </div>
-      </motion.div>
+          {label}
+        </Link>
+      ) : (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseEnter={() => setHov(true)}
+          onMouseLeave={() => setHov(false)}
+          style={sharedStyle}
+        >
+          {label}
+        </a>
+      )}
     </div>
   )
 }
 
-/* ─── Main section ───────────────────────────────────────────────── */
+/* ─── Panel image with shimmer + Ken Burns hover ────────────────── */
+function PanelImage({ panel, isMobile }: { panel: typeof PANELS[0]; isMobile: boolean }) {
+  const [hov,    setHov]    = useState(false)
+  const [loaded, setLoaded] = useState(false)
+
+  const shadow = hov ? panel.imgShadowHov : panel.imgShadow
+
+  return (
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        position:    'relative',
+        width:        '100%',
+        height:       isMobile ? 200 : '100%',
+        borderRadius: 16,
+        overflow:    'hidden',
+        background:   panel.imgFallback,
+        boxShadow:    shadow === 'none' ? undefined : shadow,
+        transition:  'box-shadow 600ms ease',
+        flexShrink:   0,
+      }}
+    >
+      {!loaded && (
+        <div
+          className="sv-shimmer"
+          style={{ position: 'absolute', inset: 0, borderRadius: 16, zIndex: 1 }}
+        />
+      )}
+
+      <div style={{
+        position:      'absolute',
+        inset:          0,
+        zIndex:         2,
+        background:    'rgba(0,0,0,0.05)',
+        opacity:        hov ? 1 : 0,
+        transition:    'opacity 300ms ease',
+        pointerEvents: 'none',
+        borderRadius:   16,
+      }} />
+
+      <Image
+        src={panel.imgSrc}
+        alt={panel.imgAlt}
+        fill
+        priority={panel.imgPriority}
+        sizes="(max-width: 768px) 88vw, 55vw"
+        onLoad={() => setLoaded(true)}
+        style={{
+          objectFit:      panel.imgFit,
+          objectPosition: panel.imgPos,
+          transform:      `${panel.imgRotate ? 'rotate(1deg) ' : ''}scale(${hov ? 1.02 : 1})`,
+          transition:     'transform 600ms ease',
+        }}
+      />
+    </div>
+  )
+}
+
+/* ─── Main section ──────────────────────────────────────────────── */
 export default function SkillsVault() {
-  const [hoveredFolder, setHoveredFolder] = useState<FolderId | null>(null)
-  const [isMobile,      setIsMobile]      = useState(false)
+  const [isMobile,  setIsMobile]  = useState(false)
+  const [active,    setActive]    = useState(0)
+  const [progress,  setProgress]  = useState(0)
+  const [showLeft,  setShowLeft]  = useState(false)
+  const [showRight, setShowRight] = useState(true)
+  const [inView,    setInView]    = useState(false)
+
+  const sectionRef = useRef<HTMLElement>(null)
+  const scrollRef  = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -208,93 +259,374 @@ export default function SkillsVault() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const tintColor = hoveredFolder ? SECTION_TINTS[hoveredFolder] : 'transparent'
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => setInView(e.isIntersecting),
+      { threshold: 0.2 },
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el
+      const max = scrollWidth - clientWidth
+      setProgress(max > 0 ? scrollLeft / max : 0)
+      setShowLeft(scrollLeft > 8)
+      setShowRight(scrollLeft < max - 8)
+      const panelW = window.innerWidth * (isMobile ? 0.88 : 0.85) + GAP
+      setActive(Math.min(Math.max(Math.round(scrollLeft / panelW), 0), PANELS.length - 1))
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [isMobile])
+
+  const scrollToPanel = useCallback((idx: number) => {
+    const el = scrollRef.current
+    if (!el) return
+    const panelW = window.innerWidth * (isMobile ? 0.88 : 0.85) + GAP
+    el.scrollTo({ left: idx * panelW, behavior: 'smooth' })
+  }, [isMobile])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!inView) return
+      if (e.key === 'ArrowRight') scrollToPanel(Math.min(active + 1, PANELS.length - 1))
+      if (e.key === 'ArrowLeft')  scrollToPanel(Math.max(active - 1, 0))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [inView, active, scrollToPanel])
+
+  const accent    = PANELS[active].accent
+  const sectionBg = PANELS[active].sectionBg
+  const H         = isMobile ? 500 : 600
+  const px        = isMobile ? 24 : 48
 
   return (
     <section
       id="skills-vault"
       data-section="skills-vault"
-      style={{
-        padding:    isMobile ? '80px 24px' : '120px 24px',
-        position:  'relative',
-        overflowX: 'hidden',
-      }}
+      ref={sectionRef}
+      style={{ position: 'relative', overflow: 'hidden' }}
     >
-      {/* Background color bleed */}
+      <style>{`
+        .sv-scroll::-webkit-scrollbar { display: none; }
+        .sv-scroll { scrollbar-width: none; }
+        @keyframes sv-arrow {
+          0%, 100% { transform: translateX(0); }
+          50%       { transform: translateX(6px); }
+        }
+        @keyframes sv-shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position:  200% 0; }
+        }
+        .sv-shimmer {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: sv-shimmer 1.5s infinite;
+        }
+      `}</style>
+
       <motion.div
-        animate={{ backgroundColor: tintColor }}
-        transition={{ duration: 0.55, ease: 'easeInOut' }}
+        animate={{ backgroundColor: sectionBg }}
+        transition={{ duration: 0.8, ease: 'easeInOut' }}
         style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
       />
+      <div style={{ position: 'absolute', inset: 0, background: '#EEEDF0', zIndex: -1 }} />
 
-      {/* Ambient blob */}
-      <div className="ambient-blob" style={{
-        top: '-80px', right: '-80px',
-        background: 'rgba(124,58,237,0.07)',
-      }} />
+      <div style={{ position: 'relative', zIndex: 1, paddingTop: isMobile ? 80 : 100 }}>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* ── Header ── */}
+        <div style={{ padding: `0 ${px}px 40px` }}>
+          <motion.p
+            className="film-label"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            style={{ marginBottom: 20 }}
+          >
+            MY EXPERTISE
+          </motion.p>
 
-        {/* Section header */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="film-label"
-          style={{ marginBottom: 20 }}
-        >
-          MY EXPERTISE
-        </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            style={{
+              fontFamily:   'var(--font-display)',
+              fontWeight:   700,
+              fontSize:     isMobile ? 40 : 'clamp(40px, 5vw, 56px)',
+              color:        '#1C1C1C',
+              lineHeight:   1.1,
+              marginBottom: 12,
+            }}
+          >
+            Skills Vault
+          </motion.h2>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-          style={{
-            fontFamily:   'var(--font-display)',
-            fontWeight:    700,
-            fontSize:     'clamp(40px, 5vw, 56px)',
-            color:         '#1C1C1C',
-            lineHeight:    1.1,
-            marginBottom:  isMobile ? 48 : 72,
-          }}
-        >
-          Skills Vault
-        </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize:   16,
+              color:      '#6B6B6B',
+              display:    'flex',
+              alignItems: 'center',
+              gap:         4,
+            }}
+          >
+            Scroll to explore what I do best
+            <span style={{ display: 'inline-block', animation: 'sv-arrow 1.2s ease-in-out infinite' }}>→</span>
+          </motion.p>
+        </div>
 
-        {/* Folder row */}
+        {/* ── Scroll area ── */}
+        <div style={{ position: 'relative' }}>
+          <motion.div
+            ref={scrollRef}
+            className="sv-scroll"
+            data-cursor="scroll"
+            data-cursor-color={accent}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{
+              display:        'flex',
+              overflowX:      'scroll',
+              overflowY:      'hidden',
+              scrollSnapType: 'x mandatory',
+              height:          H,
+              padding:        `16px ${px}px`,
+            } as React.CSSProperties}
+          >
+            {PANELS.map((panel, i) => {
+              const isActive = active === i
+              const colRatio = isMobile ? '1fr' : panel.colRatio
+
+              return (
+                <div
+                  key={panel.id}
+                  style={{
+                    width:           isMobile ? '88vw' : '85vw',
+                    height:          '100%',
+                    flexShrink:       0,
+                    marginRight:      GAP,
+                    borderRadius:     20,
+                    overflow:        'hidden',
+                    background:       panel.bg,
+                    scrollSnapAlign: 'start',
+                    opacity:          isActive ? 1 : 0.7,
+                    transform:        isActive ? 'scale(1)' : 'scale(0.97)',
+                    transition:      'opacity 400ms ease, transform 400ms ease',
+                    padding:          isMobile ? '24px 20px' : '36px 40px',
+                    display:         'flex',
+                    flexDirection:   'column',
+                    boxSizing:       'border-box',
+                  } as React.CSSProperties}
+                >
+                  {/* Top bar */}
+                  <div style={{ marginBottom: 24, flexShrink: 0 }}>
+                    <span style={{
+                      background:    panel.accent + '22',
+                      color:         panel.accent,
+                      fontFamily:    'var(--font-mono)',
+                      fontSize:       11,
+                      fontWeight:     700,
+                      letterSpacing: '0.1em',
+                      padding:       '4px 10px',
+                      borderRadius:   999,
+                    }}>
+                      {panel.num}
+                    </span>
+                  </div>
+
+                  {/* Two-column grid */}
+                  <div style={{
+                    flex:                1,
+                    display:             'grid',
+                    gridTemplateColumns: colRatio,
+                    gap:                  28,
+                    minHeight:            0,
+                    overflow:            'hidden',
+                  }}>
+
+                    {/* Left: text */}
+                    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+                      {panel.label2 && (
+                        <p style={{
+                          fontFamily:    'var(--font-mono)',
+                          fontSize:       10,
+                          color:          panel.accent,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.15em',
+                          marginBottom:   8,
+                          flexShrink:     0,
+                        }}>
+                          {panel.label2}
+                        </p>
+                      )}
+
+                      <h3 style={{
+                        fontFamily:   'var(--font-display)',
+                        fontWeight:    700,
+                        fontSize:      isMobile ? Math.min(panel.headingPx, 22) : panel.headingPx,
+                        color:        '#1C1C1C',
+                        lineHeight:   1.25,
+                        marginBottom:  12,
+                        flexShrink:    0,
+                      }}>
+                        {panel.heading}
+                      </h3>
+
+                      <p style={{
+                        fontFamily:    'var(--font-body)',
+                        fontSize:       14,
+                        color:         '#4A4A4A',
+                        lineHeight:    1.7,
+                        marginBottom:  16,
+                        flexShrink:    0,
+                        display:       '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient:'vertical',
+                        overflow:      'hidden',
+                      } as React.CSSProperties}>
+                        {panel.desc}
+                      </p>
+
+                      {/* CTA — always left-aligned, directly below description */}
+                      {panel.cta && (
+                        <div style={{ marginBottom: 8, flexShrink: 0 }}>
+                          <PanelCTA
+                            label={panel.cta.label}
+                            href={panel.cta.href}
+                            accent={panel.accent}
+                            align="left"
+                            newTab={panel.cta.newTab}
+                          />
+                        </div>
+                      )}
+
+                      <div style={{ flex: 1 }} />
+                    </div>
+
+                    {/* Right: image */}
+                    <PanelImage panel={panel} isMobile={isMobile} />
+                  </div>
+                </div>
+              )
+            })}
+
+            <div style={{ flexShrink: 0, width: px, height: 1 }} />
+          </motion.div>
+
+          {/* Left arrow */}
+          {!isMobile && (
+            <button
+              onClick={() => scrollToPanel(Math.max(active - 1, 0))}
+              aria-label="Previous panel"
+              style={{
+                position:       'absolute',
+                left:            16,
+                top:            '50%',
+                transform:      'translateY(-50%)',
+                width:           44,
+                height:          44,
+                borderRadius:   '50%',
+                background:     'white',
+                border:         'none',
+                boxShadow:      '0 4px 16px rgba(0,0,0,0.12)',
+                cursor:         'pointer',
+                display:        'flex',
+                alignItems:     'center',
+                justifyContent: 'center',
+                fontSize:        18,
+                opacity:         showLeft ? 1 : 0,
+                pointerEvents:   showLeft ? 'auto' : 'none',
+                transition:     'opacity 200ms ease',
+                zIndex:          10,
+              }}
+            >←</button>
+          )}
+
+          {/* Right arrow */}
+          {!isMobile && (
+            <button
+              onClick={() => scrollToPanel(Math.min(active + 1, PANELS.length - 1))}
+              aria-label="Next panel"
+              style={{
+                position:       'absolute',
+                right:           16,
+                top:            '50%',
+                transform:      'translateY(-50%)',
+                width:           44,
+                height:          44,
+                borderRadius:   '50%',
+                background:     'white',
+                border:         'none',
+                boxShadow:      '0 4px 16px rgba(0,0,0,0.12)',
+                cursor:         'pointer',
+                display:        'flex',
+                alignItems:     'center',
+                justifyContent: 'center',
+                fontSize:        18,
+                opacity:         showRight ? 1 : 0,
+                pointerEvents:   showRight ? 'auto' : 'none',
+                transition:     'opacity 200ms ease',
+                zIndex:          10,
+              }}
+            >→</button>
+          )}
+        </div>
+
+        {/* ── Dot indicators ── */}
         <div style={{
           display:        'flex',
-          flexDirection:   isMobile ? 'column' : 'row',
-          gap:             isMobile ? 32 : 24,
           justifyContent: 'center',
-          alignItems:     'flex-end',
+          gap:             8,
+          padding:         isMobile ? '20px 0 8px' : '24px 0 8px',
         }}>
-          {FOLDERS.map((folder, i) => (
-            <motion.div
-              key={folder.id}
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                type:      'spring',
-                stiffness:  100,
-                damping:    18,
-                delay:      0.3 + i * 0.12,
+          {PANELS.map((p, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToPanel(i)}
+              aria-label={`Go to panel ${i + 1}`}
+              style={{
+                width:        active === i ? 24 : (isMobile ? 12 : 8),
+                height:       isMobile ? 12 : 8,
+                borderRadius:  999,
+                background:   active === i ? p.accent : '#CCCCCC',
+                border:       'none',
+                cursor:       'pointer',
+                padding:       0,
+                transition:   'width 300ms ease, background 300ms ease',
               }}
-              style={{ width: isMobile ? '100%' : 340 }}
-            >
-              <Folder
-                folder={folder}
-                isMobile={isMobile}
-                onHoverChange={(h) => setHoveredFolder(h ? folder.id : null)}
-              />
-            </motion.div>
+            />
           ))}
         </div>
 
+        {/* ── Progress bar ── */}
+        <div style={{ width: '100%', height: 2, background: '#E5E5E5', marginTop: 12 }}>
+          <motion.div
+            animate={{ width: `${progress * 100}%`, backgroundColor: accent }}
+            transition={{ duration: 0.1, ease: 'linear' }}
+            style={{ height: '100%' }}
+          />
+        </div>
+
+        <div style={{ height: 60 }} />
       </div>
     </section>
   )

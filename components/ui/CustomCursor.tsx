@@ -5,7 +5,8 @@ import { motion, useSpring } from 'framer-motion'
 type CursorState =
   | 'default' | 'text' | 'project' | 'nav'
   | 'contact-card' | 'photo' | 'cta' | 'flip'
-  | 'open' | 'close' | 'explore'
+  | 'open' | 'close' | 'explore' | 'pull' | 'view'
+  | 'scroll' | 'soon' | 'drag' | 'dragging'
 
 /* States that get the position-reactive gradient */
 const GRADIENT_STATES = new Set<CursorState>(['default', 'project', 'flip'])
@@ -52,7 +53,7 @@ export default function CustomCursor() {
   useEffect(() => {
     if (!innerRef.current) return
     if (GRADIENT_STATES.has(state)) return          // gradient handled in onMove
-    if (state === 'open' || state === 'explore') {
+    if (state === 'open' || state === 'explore' || state === 'pull' || state === 'view' || state === 'scroll' || state === 'soon' || state === 'drag' || state === 'dragging') {
       innerRef.current.style.background = vcRef.current
     } else if (SOLID[state]) {
       innerRef.current.style.background = SOLID[state]!
@@ -62,7 +63,7 @@ export default function CustomCursor() {
   /* Also update 'open'/'explore' bg when vaultColor changes */
   useEffect(() => {
     if (!innerRef.current) return
-    if (stateRef.current === 'open' || stateRef.current === 'explore') {
+    if (['open','explore','pull','view','scroll','soon','drag','dragging'].includes(stateRef.current)) {
       innerRef.current.style.background = vaultColor
     }
   }, [vaultColor])
@@ -117,6 +118,42 @@ export default function CustomCursor() {
           setState('explore')
           return
         }
+        if (t === 'pull') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#E85D26'
+          setVaultColor(col)
+          setState('pull')
+          return
+        }
+        if (t === 'view') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#2B4EFF'
+          setVaultColor(col)
+          setState('view')
+          return
+        }
+        if (t === 'scroll') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#2B4EFF'
+          setVaultColor(col)
+          setState('scroll')
+          return
+        }
+        if (t === 'soon') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#2B4EFF'
+          setVaultColor(col)
+          setState('soon')
+          return
+        }
+        if (t === 'drag') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#1C1C1C'
+          setVaultColor(col)
+          setState('drag')
+          return
+        }
+        if (t === 'dragging') {
+          const col = cursorEl.getAttribute('data-cursor-color') || '#1C1C1C'
+          setVaultColor(col)
+          setState('dragging')
+          return
+        }
       }
 
       const tag = (target.tagName ?? '').toLowerCase()
@@ -168,6 +205,12 @@ export default function CustomCursor() {
       case 'open':         return { w: 80, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none',                label: 'OPEN ↗',  labelColor: 'white',    spring: true  }
       case 'close':        return { w:  80, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none',                label: 'CLOSE ✕',    labelColor: 'white',   spring: true  }
       case 'explore':      return { w: 110, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none',                label: 'EXPLORE ✦',  labelColor: 'white',   spring: true  }
+      case 'pull':         return { w:  96, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none',                label: 'PULL →',     labelColor: 'white',   spring: true  }
+      case 'view':         return { w:  72, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none', label: 'VIEW ↗',    labelColor: 'white', spring: true  }
+      case 'scroll':       return { w:  96, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none', label: 'SCROLL →',  labelColor: 'white', spring: true  }
+      case 'soon':         return { w:  72, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none', label: 'SOON',      labelColor: 'white', spring: true  }
+      case 'drag':         return { w:  88, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none', label: 'DRAG ↔',    labelColor: 'white', spring: true  }
+      case 'dragging':     return { w:  88, h: 32, r: 999, rotate:  0, shadow: 'none', border: 'none', label: 'DRAGGING',  labelColor: 'white', spring: true  }
       default: return {
         w: 14, h: 14, r: 4, rotate: 0,
         shadow: sectionBg === '#FFFFFF' ? '0 0 12px rgba(255,255,255,0.6)' : 'none',

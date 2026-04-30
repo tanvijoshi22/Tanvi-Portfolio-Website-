@@ -47,7 +47,7 @@ function TypewriterHero() {
 
 export default function Hero() {
   const ref    = useRef<HTMLElement>(null)
-  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 })
+  const [mouse,       setMouse]       = useState({ x: 0.5, y: 0.5 })
 
   const springX = useSpring(0.5, { stiffness: 60, damping: 20 })
   const springY = useSpring(0.5, { stiffness: 60, damping: 20 })
@@ -163,21 +163,30 @@ export default function Hero() {
           </motion.div>
 
           {/* Right — photo */}
-          <motion.div
-            className="relative border border-near-black/10 overflow-hidden aspect-[3/4] bg-card-bg"
-            style={{ borderRadius: 4 }}
-            initial={{ opacity: 0, x: 60, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-          >
-            <Image
-              src="/tanvi.png"
-              alt="Tanvi — Product Designer"
-              fill
-              className="object-cover object-top"
-              priority
-            />
-          </motion.div>
+          <div className="flex justify-center items-center">
+            <motion.div
+              className="relative overflow-hidden aspect-[3/4]"
+              style={{
+                width:        '80%',
+                borderRadius:  24,
+                border:       '3px solid white',
+              }}
+              initial={{ opacity: 0, x: 60, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+            >
+              <Image
+                src="/Updated.png"
+                alt="Tanvi — Product Designer"
+                fill
+                className="object-contain object-bottom"
+                priority
+                style={{
+                  filter: 'brightness(1.10) contrast(0.88) saturate(0.82) hue-rotate(2deg)',
+                }}
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
 

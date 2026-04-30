@@ -124,9 +124,11 @@ function ProjectCard({
         transformOrigin: 'top center',
         isolation:       'isolate',
         clipPath,
+        cursor:          project.locked ? 'default' : 'pointer',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => { if (!project.locked && project.href !== '#') window.open(project.href, '_blank', 'noopener,noreferrer') }}
       data-cursor="project"
     >
       {/* ── Card shell ── */}
@@ -353,12 +355,14 @@ function MobileCard({ project, i }: { project: Project; i: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: i * 0.15, ease: 'easeOut' }}
       viewport={{ once: true, margin: '-60px' }}
+      onClick={() => { if (!project.locked && project.href !== '#') window.open(project.href, '_blank', 'noopener,noreferrer') }}
       style={{
         background:    project.bg,
         borderRadius:  16,
         overflow:     'hidden',
         position:     'relative',
         padding:       24,
+        cursor:        project.locked ? 'default' : 'pointer',
       }}
     >
       {/* Logo + name */}

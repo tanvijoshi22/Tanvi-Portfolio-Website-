@@ -134,3 +134,5 @@ html.lenis                { height: auto; }
     transition-duration:0.01ms !important;
   }
 }
+
+div[data-cursor="drag"]::-webkit-scrollbar { display: none; }
