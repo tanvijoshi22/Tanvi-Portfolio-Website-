@@ -81,7 +81,7 @@ const PANELS = [
     tags:        [] as string[],
     stats:       [] as { v: string; l: string }[],
     badge:       null as string | null,
-    cta:         { label: 'View Project', href: '#', align: 'left' as 'left' | 'right' },
+    cta:         { label: 'Read Blog', href: 'https://fitforge-case-study.vercel.app/', align: 'left' as 'left' | 'right' },
     imgSrc:      '/Skill-vault/Fitforge.png',
     imgAlt:      'FitForge — Vibe Coded Mobile Application',
     imgFallback: '#F3EEFF',
