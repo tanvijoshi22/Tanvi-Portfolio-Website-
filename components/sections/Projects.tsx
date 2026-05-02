@@ -36,7 +36,7 @@ const PROJECTS = [
     tags:        ['Gym Management', 'B2B', 'Visual Design', 'Design System', 'Web'],
     title:       'Cut booking conflicts and reduce scheduling time with AI powered gym management platform',
     outcome:     'AI-powered scheduling that eliminates booking friction',
-    href:        'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=149-11908&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=819%3A39408',
+    href:        'https://gym-management-case-study.vercel.app/',
     locked: false,
     bg:          '#1A56FF',
     textColor:   '#FFFFFF',
@@ -221,19 +221,13 @@ function ProjectCard({
             {/* Bottom: title + outcome + CTA */}
             <div>
               <h3 style={{
-                fontFamily:       'var(--font-display)',
-                fontWeight:        700,
-                fontSize:         'clamp(18px, 1.75vw, 26px)',
-                color:             project.textColor,
-                lineHeight:        1.2,
-                marginBottom:      12,
-                ...(project.id === 'p2' && {
-                  display:         '-webkit-box',
-                  WebkitLineClamp:  3,
-                  WebkitBoxOrient: 'vertical',
-                  overflow:        'hidden',
-                }),
-              } as React.CSSProperties}>
+                fontFamily:   'var(--font-display)',
+                fontWeight:    700,
+                fontSize:     'clamp(18px, 1.75vw, 26px)',
+                color:         project.textColor,
+                lineHeight:    1.2,
+                marginBottom:  12,
+              }}>
                 {project.title}
               </h3>
 
