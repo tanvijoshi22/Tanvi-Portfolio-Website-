@@ -8,8 +8,8 @@ const CARDS = [
   {
     icon:       Mail,
     label:      'Email',
-    value:      'tanvi@email.com',
-    href:       'mailto:tanvi@email.com',
+    value:      'tanvi.joshi2016@gmail.com',
+    href:       'mailto:tanvi.joshi2016@gmail.com',
     hoverColor: '#2B4EFF',
     external:   false,
   },

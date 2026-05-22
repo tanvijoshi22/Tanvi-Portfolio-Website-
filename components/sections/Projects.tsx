@@ -17,6 +17,7 @@ const PROJECTS = [
     outcome:     'Real-time threat detection across web and mobile',
     href:        'https://www.figma.com/proto/Dd6317LkunymVw4cuBj47U/My-portfolio-page?page-id=104%3A6525&node-id=819-39408&viewport=77%2C218%2C0.06&t=3lZcSwKe5d3IUISK-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=819%3A39408',
     locked: false,
+    comingSoon: false,
     bg:          'radial-gradient(circle at 85% 20%, rgba(43,78,255,0.20) 0%, transparent 55%), #0D1117',
     textColor:   '#FFFFFF',
     tagBg:       'rgba(255,255,255,0.12)',
@@ -28,6 +29,8 @@ const PROJECTS = [
     mockupSrc:   '/Project-images/Project-1.png',
     mockupAlt:   'IoT Device Integration Platform mockup',
     mockupShadow:'0 20px 60px rgba(0,0,0,0.3)',
+    mockupScale:  1.18,
+    mockupBlendMode: 'normal',
   },
   {
     id: 'p2', index: '02',
@@ -38,6 +41,7 @@ const PROJECTS = [
     outcome:     'AI-powered scheduling that eliminates booking friction',
     href:        'https://gym-management-case-study.vercel.app/',
     locked: false,
+    comingSoon: false,
     bg:          '#1A56FF',
     textColor:   '#FFFFFF',
     tagBg:       'rgba(255,255,255,0.18)',
@@ -49,6 +53,8 @@ const PROJECTS = [
     mockupSrc:   '/Project-images/Project-2.png',
     mockupAlt:   'Gym Management Dashboard mockup',
     mockupShadow:'0 20px 60px rgba(0,0,0,0.3)',
+    mockupScale:  1.18,
+    mockupBlendMode: 'normal',
   },
   {
     id: 'p3', index: '03',
@@ -59,6 +65,7 @@ const PROJECTS = [
     outcome:     'Ongoing — available for discussion in interviews',
     href:        '#',
     locked: true,
+    comingSoon: false,
     bg:          'radial-gradient(circle at 85% 20%, rgba(124,58,237,0.20) 0%, transparent 55%), #1A0533',
     textColor:   '#FFFFFF',
     tagBg:       'rgba(255,255,255,0.15)',
@@ -70,6 +77,32 @@ const PROJECTS = [
     mockupSrc:   '/Project-images/Project-3.png',
     mockupAlt:   'Sony LIV OTT Application mockup',
     mockupShadow:'0 20px 60px rgba(124,58,237,0.3)',
+    mockupScale:  1.18,
+    mockupBlendMode: 'normal',
+  },
+  {
+    id: 'p4', index: '04',
+    projectName: 'Mortgage Rules Engine',
+    logoColor:   '#FFFFFF',
+    tags:        ['Mortgage management', 'B2B', 'Visual design', 'Web'],
+    title:       'Turning mortgage rules into simple decisions',
+    outcome:     'Configuring complex loan eligibility rules',
+    href:        '#',
+    locked: false,
+    comingSoon: true,
+    bg:          'radial-gradient(circle at 85% 20%, rgba(90,130,255,0.18) 0%, transparent 55%), #1B3A8C',
+    textColor:   '#FFFFFF',
+    tagBg:       'rgba(255,255,255,0.15)',
+    tagColor:    '#FFFFFF',
+    ctaColor:    '#FFFFFF',
+    accentColor: '#5A82FF',
+    hoverShadow: '0 20px 60px rgba(27,58,140,0.45)',
+    hoverBorder: 'rgba(255,255,255,0.20)',
+    mockupSrc:   '/Project-images/Project-4.png',
+    mockupAlt:   'Mortgage Rules Engine mockup',
+    mockupShadow:'0 20px 60px rgba(0,0,0,0.3)',
+    mockupScale:  1.0,
+    mockupBlendMode: 'normal',
   },
 ]
 type Project = typeof PROJECTS[0]
@@ -78,18 +111,20 @@ const FILTER_TABS = [
   { emoji: '🟣', text: 'IoT Device Integration Platform' },
   { emoji: '🔵', text: 'Gym Management Web Application' },
   { emoji: '🟣', text: 'Sony LIV OTT Application' },
+  { emoji: '🔷', text: 'Mortgage Rules Engine' },
 ]
 
 /* ─────────────────────────────────────────────────────────────────── */
 /*  Layout constants                                                    */
 /* ─────────────────────────────────────────────────────────────────── */
 const CARD_H       = 480
-const STACKED_TOPS = [60, 68, 76]
+const STACKED_TOPS = [60, 68, 76, 84]
 const CARD_GAP     = 28
 const INITIAL_TOPS = [
   STACKED_TOPS[0],
   STACKED_TOPS[0] + CARD_H + CARD_GAP,
   STACKED_TOPS[0] + (CARD_H + CARD_GAP) * 2,
+  STACKED_TOPS[0] + (CARD_H + CARD_GAP) * 3,
 ]
 
 /* ─────────────────────────────────────────────────────────────────── */
@@ -243,7 +278,24 @@ function ProjectCard({
               </p>
 
               {/* CTA */}
-              {project.locked ? (
+              {project.comingSoon ? (
+                <span style={{
+                  fontFamily:  'var(--font-body)',
+                  fontWeight:   600,
+                  fontSize:     14,
+                  color:        project.ctaColor,
+                  display:     'inline-flex',
+                  alignItems:  'center',
+                  gap:          6,
+                  opacity:      0.70,
+                  border:      `1px solid rgba(255,255,255,0.35)`,
+                  borderRadius: 4,
+                  padding:     '6px 12px',
+                  letterSpacing: '0.02em',
+                }}>
+                  Coming soon
+                </span>
+              ) : project.locked ? (
                 <span style={{
                   fontFamily: 'var(--font-body)',
                   fontWeight:  600,
@@ -297,8 +349,8 @@ function ProjectCard({
             overflow:       'hidden',
           }}>
             <motion.div
-              animate={{ scale: hovered ? 1.07 : 1.18, y: hovered ? -6 : 0 }}
-              initial={{ scale: 1.18 }}
+              animate={{ scale: hovered ? Math.max(1.0, project.mockupScale * 0.92) : project.mockupScale, y: hovered ? -6 : 0 }}
+              initial={{ scale: project.mockupScale }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
               style={{
                 position:        'absolute',
@@ -314,6 +366,7 @@ function ProjectCard({
                 style={{
                   objectFit:      'contain',
                   objectPosition: 'center center',
+                  mixBlendMode:   project.mockupBlendMode as React.CSSProperties['mixBlendMode'],
                 }}
               />
             </motion.div>
@@ -415,7 +468,18 @@ function MobileCard({ project, i }: { project: Project; i: number }) {
       </p>
 
       {/* CTA */}
-      {project.locked ? (
+      {project.comingSoon ? (
+        <span style={{
+          fontFamily: 'var(--font-body)', fontWeight: 600,
+          fontSize: 13, color: project.ctaColor,
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          border: `1px solid rgba(255,255,255,0.35)`,
+          borderRadius: 4, padding: '5px 10px',
+          opacity: 0.70, letterSpacing: '0.02em',
+        }}>
+          Coming soon
+        </span>
+      ) : project.locked ? (
         <span style={{
           fontFamily: 'var(--font-body)', fontWeight: 600,
           fontSize: 13, color: project.ctaColor,
@@ -544,7 +608,7 @@ export default function Projects() {
 
   useEffect(() => {
     return scrollYProgress.on('change', v => {
-      setActiveFilter(v < 0.33 ? 0 : v < 0.66 ? 1 : 2)
+      setActiveFilter(v < 0.25 ? 0 : v < 0.5 ? 1 : v < 0.75 ? 2 : 3)
     })
   }, [scrollYProgress])
 
@@ -552,28 +616,36 @@ export default function Projects() {
     if (!stackRef.current) return
     const el  = stackRef.current
     const top = window.scrollY + el.getBoundingClientRect().top
-    const target = top + [0, 0.33, 0.66][index] * el.offsetHeight
+    const target = top + [0, 0.25, 0.5, 0.75][index] * el.offsetHeight
     if (lenis) lenis.scrollTo(target, { duration: 1.2 })
     else window.scrollTo({ top: target, behavior: 'smooth' })
   }
 
   /* ── Scroll-driven scale transforms ── */
-  const card1Scale = useTransform(scrollYProgress, [0, 0.33, 0.66], [1, 0.98, 0.96])
+  const card1Scale = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75], [1, 0.98, 0.96, 0.94])
 
-  const card2Top   = useTransform(scrollYProgress, [0, 0.33], [INITIAL_TOPS[1], STACKED_TOPS[1]])
-  const card2Scale = useTransform(scrollYProgress, [0.33, 0.66], [1, 0.98])
+  const card2Top   = useTransform(scrollYProgress, [0, 0.25], [INITIAL_TOPS[1], STACKED_TOPS[1]])
+  const card2Scale = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [1, 0.98, 0.96])
 
-  const card3Top   = useTransform(scrollYProgress, [0.33, 0.66], [INITIAL_TOPS[2], STACKED_TOPS[2]])
+  const card3Top   = useTransform(scrollYProgress, [0.25, 0.5], [INITIAL_TOPS[2], STACKED_TOPS[2]])
+  const card3Scale = useTransform(scrollYProgress, [0.5, 0.75], [1, 0.98])
+
+  const card4Top   = useTransform(scrollYProgress, [0.5, 0.75], [INITIAL_TOPS[3], STACKED_TOPS[3]])
 
   /* ── Burial overlays — high opacity so no content bleeds through ── */
   const card1Overlay = useTransform(
     scrollYProgress,
-    [0.20, 0.33, 0.53, 0.66],
-    [0,    0.72, 0.72, 0.85],
+    [0.15, 0.25, 0.40, 0.5, 0.60, 0.75],
+    [0,    0.72, 0.72, 0.85, 0.85, 0.90],
   )
   const card2Overlay = useTransform(
     scrollYProgress,
-    [0.53, 0.66],
+    [0.40, 0.5, 0.65, 0.75],
+    [0,    0.72, 0.72, 0.85],
+  )
+  const card3Overlay = useTransform(
+    scrollYProgress,
+    [0.65, 0.75],
     [0,    0.72],
   )
 
@@ -583,6 +655,9 @@ export default function Projects() {
   )
   const card2ClipPath = useTransform(card3Top, (y: number) =>
     `inset(0px 0px ${Math.max(0, STACKED_TOPS[1] + CARD_H - y)}px 0px)`
+  )
+  const card3ClipPath = useTransform(card4Top, (y: number) =>
+    `inset(0px 0px ${Math.max(0, STACKED_TOPS[2] + CARD_H - y)}px 0px)`
   )
 
   if (isMobile) return <MobileProjects />
@@ -652,7 +727,7 @@ export default function Projects() {
       </div>
 
       {/* ── Stacking scroll zone ── */}
-      <div ref={stackRef} style={{ height: 'calc(100vh * 3)' }}>
+      <div ref={stackRef} style={{ height: 'calc(100vh * 4)' }}>
         <div style={{
           position: 'sticky', top: 0,
           height: '100vh',
@@ -679,9 +754,17 @@ export default function Projects() {
           <ProjectCard
             project={PROJECTS[2]}
             topValue={card3Top}
+            scaleValue={card3Scale}
+            overlayOpacity={card3Overlay}
+            zIndex={3}
+            clipPath={card3ClipPath}
+          />
+          <ProjectCard
+            project={PROJECTS[3]}
+            topValue={card4Top}
             scaleValue={1}
             overlayOpacity={0}
-            zIndex={3}
+            zIndex={4}
           />
         </div>
       </div>
