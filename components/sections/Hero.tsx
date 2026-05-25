@@ -127,7 +127,33 @@ export default function Hero() {
       <div className="relative z-10 flex-1 flex items-center max-w-6xl mx-auto px-6 md:px-10 w-full">
         <div className="grid md:grid-cols-2 gap-12 items-center w-full py-8">
 
-          {/* Left — text */}
+          {/* Left — photo */}
+          <div className="flex justify-center items-center">
+            <motion.div
+              className="relative overflow-hidden aspect-[3/4]"
+              style={{
+                width:        '80%',
+                borderRadius:  24,
+                border:       '3px solid white',
+              }}
+              initial={{ opacity: 0, x: -60, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+            >
+              <Image
+                src="/New-Tanvi-pic.jpg"
+                alt="Tanvi — Product Designer"
+                fill
+                className="object-cover object-top"
+                priority
+                style={{
+                  filter: 'brightness(1.10) contrast(0.88) saturate(0.82) hue-rotate(2deg)',
+                }}
+              />
+            </motion.div>
+          </div>
+
+          {/* Right — text */}
           <motion.div
             initial="hidden"
             animate="visible"
@@ -161,32 +187,6 @@ export default function Hero() {
               </a>
             </motion.div>
           </motion.div>
-
-          {/* Right — photo */}
-          <div className="flex justify-center items-center">
-            <motion.div
-              className="relative overflow-hidden aspect-[3/4]"
-              style={{
-                width:        '80%',
-                borderRadius:  24,
-                border:       '3px solid white',
-              }}
-              initial={{ opacity: 0, x: 60, scale: 0.96 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-            >
-              <Image
-                src="/Updated.png"
-                alt="Tanvi — Product Designer"
-                fill
-                className="object-contain object-bottom"
-                priority
-                style={{
-                  filter: 'brightness(1.10) contrast(0.88) saturate(0.82) hue-rotate(2deg)',
-                }}
-              />
-            </motion.div>
-          </div>
         </div>
       </div>
 
