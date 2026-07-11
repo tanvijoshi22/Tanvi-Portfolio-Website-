@@ -19,8 +19,9 @@ import SceneIndicator  from '@/components/navigation/SceneIndicator'
 // Portfolio sections
 import Hero    from '@/components/sections/Hero'
 import Projects    from '@/components/sections/Projects'
-import SkillsVault  from '@/components/sections/SkillsVault'
-import About        from '@/components/sections/About'
+import SkillsVault        from '@/components/sections/SkillsVault'
+import VibeCodedProducts  from '@/components/sections/VibeCodedProducts'
+import About              from '@/components/sections/About'
 import WhyMe   from '@/components/sections/WhyMe'
 import Contact  from '@/components/sections/Contact'
 
@@ -53,6 +54,7 @@ export default function Home() {
             <Hero />
             <Projects />
             <SkillsVault />
+            <VibeCodedProducts />
             <About />
             <WhyMe />
             <Contact />
