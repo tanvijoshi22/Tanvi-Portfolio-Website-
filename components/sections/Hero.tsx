@@ -144,6 +144,7 @@ export default function Hero() {
                 src="/New-Tanvi-pic.jpg"
                 alt="Tanvi — Product Designer"
                 fill
+                sizes="(max-width: 768px) 80vw, 40vw"
                 className="object-cover object-top"
                 priority
                 style={{
